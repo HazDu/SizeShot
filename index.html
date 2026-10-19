@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SizeShot</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23FFB020'/%3E%3Cpath d='M7 11v10M25 11v10M8 16h16M11 13l-3 3 3 3M21 13l3 3-3 3' fill='none' stroke='%231a1200' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#FFB020"/><path d="M7 11v10M25 11v10M8 16h16M11 13l-3 3 3 3M21 13l3 3-3 3" fill="none" stroke="#1a1200" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Size<b>Shot</b></span>
+    </div>
+    <div class="actions">
+      <button class="btn" id="btnUpload" title="Upload a new image">
+        <svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg><span class="lbl">Upload image</span>
+      </button>
+      <span class="sep"></span>
+      <button class="btn icon-btn" id="btnUndo" title="Undo (Ctrl+Z)"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+      <button class="btn icon-btn" id="btnRedo" title="Redo (Ctrl+Y)"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
+      <span class="sep"></span>
+      <button class="btn" id="btnOpen" title="Open a saved SizeShot project (.json)">
+        <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="lbl">Open</span>
+      </button>
+      <button class="btn needs-image" id="btnSave" title="Save project to keep editing later (Ctrl+S)">
+        <svg viewBox="0 0 24 24"><path d="M5 3h11l5 5v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM7 3v6h8V3M7 21v-7h10v7"/></svg><span class="lbl">Save</span>
+      </button>
+      <button class="btn needs-image" id="btnCopy" title="Copy the annotated image to the clipboard">
+        <svg viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg><span class="lbl">Copy</span>
+      </button>
+      <button class="btn accent needs-image" id="btnExport" title="Download the annotated image as PNG">
+        <svg viewBox="0 0 24 24"><path d="M12 4v12M7 11l5 5 5-5M4 20h16"/></svg><span class="lbl">Export PNG</span>
+      </button>
+    </div>
+    <input type="file" id="fileImg" accept="image/*" hidden>
+    <input type="file" id="fileProj" accept=".json,application/json" hidden>
+  </header>
+
+  <main class="app" id="app">
+    <nav class="tools" id="tools" aria-label="Tools">
+      <button class="tool active" data-tool="select" title="Select & move (V)">
+        <svg viewBox="0 0 24 24"><path d="M5 3l14 8-6.5 1.5L9 19z"/></svg>Select
+      </button>
+      <hr>
+      <button class="tool" data-tool="dim" title="Dimension line (D)">
+        <svg viewBox="0 0 24 24"><path d="M3 7v10M21 7v10M5 12h14M8 9l-3 3 3 3M16 9l3 3-3 3"/></svg>Dimension
+      </button>
+      <button class="tool" data-tool="callout" title="Label with arrow (C)">
+        <svg viewBox="0 0 24 24"><rect x="11" y="3" width="10" height="7" rx="2"/><path d="M13 10L4 20M4 20l1.2-4.6M4 20l4.6-1.2"/></svg>Callout
+      </button>
+      <button class="tool" data-tool="text" title="Plain text (T)">
+        <svg viewBox="0 0 24 24"><path d="M5 7V4h14v3M12 4v16M9 20h6"/></svg>Text
+      </button>
+      <hr>
+      <button class="tool" data-tool="arrow" title="Arrow (A)">
+        <svg viewBox="0 0 24 24"><path d="M5 19L19 5M10 5h9v9"/></svg>Arrow
+      </button>
+      <button class="tool" data-tool="angle" title="Angle (G)">
+        <svg viewBox="0 0 24 24"><path d="M4 20h16M4 20L15 5M11 20a7 7 0 0 0-2.7-5.6"/></svg>Angle
+      </button>
+      <button class="tool" data-tool="rect" title="Rectangle highlight (R)">
+        <svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1.5"/></svg>Box
+      </button>
+      <button class="tool" data-tool="ellipse" title="Ellipse highlight (E)">
+        <svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="6.5"/></svg>Circle
+      </button>
+      <button class="tool" data-tool="marker" title="Numbered marker (M)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M10.5 9.5L12.5 8v8"/></svg>Marker
+      </button>
+    </nav>
+
+    <section class="canvas-wrap" id="wrap">
+      <div class="empty" id="empty">
+        <div class="drop">
+          <svg viewBox="0 0 24 24" class="drop-icon"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/><circle cx="15.5" cy="9" r="1.5"/></svg>
+          <h1>Measure anything in a photo</h1>
+          <p>Drop an image here, paste it with <kbd>Ctrl</kbd>+<kbd>V</kbd>, or choose a file.</p>
+          <div class="drop-actions">
+            <button class="btn accent" id="btnUpload2">Choose image</button>
+          </div>
+        </div>
+      </div>
+      <svg id="stage" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <image id="photo" x="0" y="0"/>
+        <rect id="frame" x="0" y="0" fill="none" vector-effect="non-scaling-stroke"/>
+        <g id="layer" font-family="'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-weight="600"></g>
+        <g id="handles"></g>
+      </svg>
+      <div class="hint" id="hint"></div>
+      <div class="zoom">
+        <button class="zbtn" id="zOut" title="Zoom out (-)">&minus;</button>
+        <button class="zbtn zval" id="zVal" title="Actual size">100%</button>
+        <button class="zbtn" id="zIn" title="Zoom in (+)">+</button>
+        <button class="zbtn" id="zFit" title="Fit to screen (0)">Fit</button>
+      </div>
+    </section>
+
+    <aside class="props" id="props">
+      <div class="props-head">
+        <div id="propsTitle">New shape style</div>
+        <div class="muted" id="propsSub">Applies to the next shape you draw</div>
+      </div>
+      <div class="field" id="fText">
+        <label for="propText">Text</label>
+        <textarea id="propText" rows="2" spellcheck="false"></textarea>
+      </div>
+
+      <div class="tabs" role="tablist" id="tabs">
+        <button type="button" role="tab" data-tab="shape">Shape</button>
+        <button type="button" role="tab" data-tab="label">Label</button>
+        <button type="button" role="tab" data-tab="border">Border</button>
+      </div>
+
+      <div class="tabpane" data-pane="shape">
+        <div class="field">
+          <label>Color</label>
+          <div class="swatches" id="swColor"></div>
+        </div>
+        <div class="field" id="fLw">
+          <label for="propLw">Line width</label>
+          <input type="range" id="propLw" min="0.3" max="4" step="0.1">
+        </div>
+        <div class="field checks" id="fChecks">
+          <label id="fDash"><input type="checkbox" id="propDash"> Dashed line</label>
+          <label id="fFill"><input type="checkbox" id="propFill"> Fill</label>
+        </div>
+      </div>
+
+      <div class="tabpane" data-pane="label">
+        <div class="field">
+          <label for="propFs">Text size</label>
+          <input type="range" id="propFs" min="0.4" max="5" step="0.1">
+        </div>
+        <div class="field">
+          <label>Text color</label>
+          <div class="swatches" id="swTc"></div>
+        </div>
+        <div class="field">
+          <label>Background</label>
+          <div class="swatches" id="swBg"></div>
+        </div>
+        <div class="field">
+          <label for="propPad">Padding <output id="oPad"></output></label>
+          <input type="range" id="propPad" min="0" max="3" step="0.05">
+        </div>
+        <div class="field" id="fRad">
+          <label for="propRad">Corners <output id="oRad"></output></label>
+          <input type="range" id="propRad" min="0" max="1" step="0.01">
+        </div>
+      </div>
+
+      <div class="tabpane" data-pane="border">
+        <div class="field">
+          <label>Border color</label>
+          <div class="swatches" id="swBc"></div>
+        </div>
+        <div class="field">
+          <label for="propBw">Border width <output id="oBw"></output></label>
+          <input type="range" id="propBw" min="0" max="5" step="0.1">
+        </div>
+        <div class="muted" id="borderNote">Outlines the lines and arrowheads as well as the label.</div>
+      </div>
+
+      <div class="field row" id="fActions">
+        <button class="btn sm" id="btnDup" title="Duplicate (Ctrl+D)">Duplicate</button>
+        <button class="btn sm" id="btnFront" title="Bring to front">To front</button>
+        <button class="btn sm danger" id="btnDel" title="Delete (Del)">Delete</button>
+      </div>
+      <div class="tips">
+        <div class="tips-title">Tips</div>
+        <ul>
+          <li>Drag a shape to move it, drag a <span class="dot"></span> handle to reshape it.</li>
+          <li>The <span class="dia"></span> handle on a dimension pushes the line away from the object.</li>
+          <li><kbd>Double-click</kbd> or <kbd>Enter</kbd> to edit text.</li>
+          <li>Hold <kbd>Shift</kbd> to snap to 15° steps.</li>
+          <li>Scroll to zoom, drag empty space or hold <kbd>Space</kbd> to pan.</li>
+          <li>Text is free-form &mdash; write <i>10 cm</i>, <i>4"</i>, <i>approx. 2 m</i>, anything.</li>
+        </ul>
+        <button class="linkbtn needs-image" id="btnClear">Remove all annotations</button>
+      </div>
+    </aside>
+  </main>
+
+  <dialog class="dlg" id="saveDlg">
+    <form method="dialog" class="dlg-form">
+      <div class="dlg-head">
+        <h2 id="dlgTitle">Export image</h2>
+        <button class="dlg-x" value="cancel" title="Close" aria-label="Close">&times;</button>
+      </div>
+      <div class="dlg-body">
+        <div class="dlg-preview" id="dlgPreviewWrap"><img id="dlgPreview" alt="Export preview"></div>
+        <div class="dlg-fields">
+          <div class="field">
+            <label for="dlgName">File name</label>
+            <div class="name-row"><input id="dlgName" type="text" spellcheck="false" autocomplete="off"><span id="dlgExt">.png</span></div>
+          </div>
+          <div class="field" id="dlgFmtRow">
+            <label>Format</label>
+            <div class="seg" id="dlgFmt">
+              <button type="button" data-v="png">PNG</button>
+              <button type="button" data-v="jpeg">JPG</button>
+              <button type="button" data-v="webp">WebP</button>
+            </div>
+          </div>
+          <div class="field" id="dlgQRow">
+            <label for="dlgQ">Quality <output id="dlgQOut"></output></label>
+            <input type="range" id="dlgQ" min="0.5" max="1" step="0.01" value="0.92">
+          </div>
+          <div class="field" id="dlgScaleRow">
+            <label>Size</label>
+            <div class="seg" id="dlgScale">
+              <button type="button" data-v="0.5">50%</button>
+              <button type="button" data-v="1">100%</button>
+              <button type="button" data-v="2">200%</button>
+            </div>
+          </div>
+          <div class="muted" id="dlgInfo"></div>
+        </div>
+      </div>
+      <div class="dlg-actions">
+        <button class="btn" value="cancel">Cancel</button>
+        <button class="btn accent" id="dlgGo" value="default">Save&hellip;</button>
+      </div>
+    </form>
+  </dialog>
+
+  <textarea id="editor" class="editor" rows="1" spellcheck="false" hidden></textarea>
+  <div class="toast" id="toast" role="status"></div>
+  <div class="dropmask" id="dropmask"><div>Drop image to load</div></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

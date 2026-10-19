@@ -1,6 +1,6 @@
 # SizeShot
 
-**[▶ Open SizeShot](https://example.com)** (need to make the domain first, will be added shortly)
+**[▶ Open SizeShot](https://sizeshot.hazdu.de)**
 
 SizeShot lets you add measurements and notes to photos and screenshots right in your browser. Load an image, draw dimension lines, callouts, arrows, angles and highlights on it, then export the result as an image or copy it straight to the clipboard. There's nothing to install or sign up for, and your images stay on your device.
 

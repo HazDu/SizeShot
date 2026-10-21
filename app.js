@@ -8,7 +8,7 @@
 
   const FONT = "'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
   const STORE = 'sizeshot.autosave.v1';
-  const COLORS = ['#FFB020', '#FF4D4F', '#22C55E', '#38BDF8', '#A78BFA', '#FFFFFF', '#111111'];
+  const COLORS = ['#111111', '#FFFFFF', '#FFB020', '#FF4D4F', '#22C55E', '#38BDF8', '#A78BFA'];
 
   const TYPES = {
     dim:     { name: 'Dimension', text: true,  hint: 'Press at one end, drag across the object and release at the other end.' },
@@ -38,8 +38,8 @@
   let exporting = false;
   let geom = {};                   // label boxes from the last render, by item id
   let hist = [], hIdx = -1;
-  const LABEL_DEFAULTS = { bg: 'auto', tc: 'auto', bc: 'auto', bw: 1, pad: 1, rad: 0.55 };
-  const defaults = { color: COLORS[0], lw: 1, fs: 1, dash: false, fill: false, ...LABEL_DEFAULTS };
+  const LABEL_DEFAULTS = { bg: 'auto', tc: 'auto', bc: 'auto', bw: 0.6, pad: 0.8, rad: 0.25 };
+  const defaults = { color: COLORS[0], lw: 1, fs: 0.6, dash: false, fill: false, ...LABEL_DEFAULTS };
 
   // ---------- helpers ----------
   const V = {

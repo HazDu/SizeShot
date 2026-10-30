@@ -37,6 +37,8 @@ kbd {
 .brand { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; letter-spacing: .2px; white-space: nowrap; }
 .brand svg { width: 28px; height: 28px; }
 .brand b { color: var(--accent); }
+.brand .source-btn { margin-left: 6px; font-size: 14px; letter-spacing: 0; text-decoration: none; }
+.brand .source-btn svg { width: 16px; height: 16px; fill: currentColor; stroke: none; }
 .actions { display: flex; align-items: center; gap: 6px; overflow-x: auto; scrollbar-width: none; }
 .sep { width: 1px; height: 22px; background: var(--line); margin: 0 4px; flex: none; }
 
